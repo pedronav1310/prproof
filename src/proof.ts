@@ -8,7 +8,7 @@ export type ProofVerdict =
   | "error";
 
 export function classifyProof(base: TestRunResult, branch: TestRunResult): ProofVerdict {
-  if (base.status === "error" && branch.status ==="error"){
+  if (base.status === "error" || branch.status ==="error"){
     return "error";
   }
   if (base.status === "failed" && branch.status === "passed") {
