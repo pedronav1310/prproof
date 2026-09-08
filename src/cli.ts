@@ -1,23 +1,10 @@
 #!/usr/bin/env node
 
-import {
-  createBaseWorktree,
-  getChangedFiles,
-  getCurrentBranch,
-  getRepoRoot,
-  removeWorktree,
-} from "./git.js";
+import {createBaseWorktree, getChangedFiles, getCurrentBranch, getRepoRoot, removeWorktree,} from "./git.js";
 
-import {
-  copyTestsToBase,
-  getChangedTestFiles,
-  runTests,
-} from "./tests.js";
+import {copyTestsToBase, getChangedTestFiles, runTests, linkNodeModules} from "./tests.js";
 
-import {
-  classifyProof,
-  getVerdictMessage,
-} from "./proof.js";
+import {classifyProof, getVerdictMessage,} from "./proof.js";
 
 const targetRepo = process.argv[2] ?? process.cwd();
 
@@ -40,6 +27,9 @@ console.log(`Changed tests: ${changedTestFiles.join(", ")}`);
 const baseWorktree = createBaseWorktree(repoRoot);
 
 try {
+
+  linkNodeModules(repoRoot, baseWorktree);
+
   copyTestsToBase(
     repoRoot,
     baseWorktree,

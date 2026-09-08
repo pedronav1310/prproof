@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
-import {copyFileSync, mkdirSync, readFileSync, unlinkSync, existsSync} from "node:fs";
+import {copyFileSync, mkdirSync, readFileSync, unlinkSync, existsSync, symlinkSync} from "node:fs";
 import {dirname, join} from "node:path";
+
 
 type VitestReport={
     numTotalTests:number;
@@ -18,6 +19,20 @@ export type TestRunResult = {
   status: TestStatus;
   output: string;
 };
+
+export function linkNodeModules(
+  repoRoot: string,
+  baseWorktree: string
+): void {
+  const source = join(repoRoot, "node_modules");
+  const destination = join(baseWorktree, "node_modules");
+
+  if (!existsSync(source)) {
+    throw new Error("node_modules not found. Run npm install first.");
+  }
+
+  symlinkSync(source, destination, "dir");
+}
 
 export function getChangedTestFiles(changedFiles: string[]): string[] {
   return changedFiles.filter((file) =>

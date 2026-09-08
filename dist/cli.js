@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { createBaseWorktree, getChangedFiles, getCurrentBranch, getRepoRoot, removeWorktree, } from "./git.js";
-import { copyTestsToBase, getChangedTestFiles, runTests, } from "./tests.js";
+import { copyTestsToBase, getChangedTestFiles, runTests, linkNodeModules } from "./tests.js";
 import { classifyProof, getVerdictMessage, } from "./proof.js";
 const targetRepo = process.argv[2] ?? process.cwd();
 const repoRoot = getRepoRoot(targetRepo);
@@ -17,9 +17,12 @@ console.log(`Current branch: ${currentBranch}`);
 console.log(`Changed tests: ${changedTestFiles.join(", ")}`);
 const baseWorktree = createBaseWorktree(repoRoot);
 try {
+    linkNodeModules(repoRoot, baseWorktree);
     copyTestsToBase(repoRoot, baseWorktree, changedTestFiles);
     const baseResult = runTests(baseWorktree, changedTestFiles);
     const branchResult = runTests(repoRoot, changedTestFiles);
+    console.log("BASE OUTPUT:");
+    console.log(baseResult.output);
     const verdict = classifyProof(baseResult, branchResult);
     console.log();
     console.log(`main: ${baseResult.status}`);

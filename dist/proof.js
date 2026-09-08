@@ -1,5 +1,5 @@
 export function classifyProof(base, branch) {
-    if (base.status === "error" && branch.status === "error") {
+    if (base.status === "error" || branch.status === "error") {
         return "error";
     }
     if (base.status === "failed" && branch.status === "passed") {
