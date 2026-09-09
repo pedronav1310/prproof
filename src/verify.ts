@@ -6,6 +6,20 @@ import {inspectChanges, type PrInspection,} from "./inspect.js";
 
 import {classifyProof, type ProofVerdict,} from "./proof.js";
 
+export type TestOnlyResult = {
+  type: "test-only";
+  repoRoot: string;
+  baseRef: string;
+  inspection: PrInspection;
+};
+
+export type NoProofRequiredResult = {
+  type: "no-proof-required";
+  repoRoot: string;
+  baseRef: string;
+  inspection: PrInspection;
+};
+
 export type ProofVerificationResult = {
   type: "proof";
   repoRoot: string;
@@ -26,9 +40,11 @@ export type InsufficientEvidenceResult = {
 
 export type VerificationResult =
   | ProofVerificationResult
-  | InsufficientEvidenceResult;
+  | InsufficientEvidenceResult
+  | TestOnlyResult
+  | NoProofRequiredResult;
 
-export function verifyRepository(targetRepo: string, baseRef: string): VerificationResult | null {
+export function verifyRepository(targetRepo: string, baseRef: string): VerificationResult{
   const repoRoot = getRepoRoot(targetRepo);
 
   const changedFiles = getChangedFiles(targetRepo, baseRef);
@@ -46,8 +62,22 @@ export function verifyRepository(targetRepo: string, baseRef: string): Verificat
     };
   }
 
-  if (changedTestFiles.length === 0) {
-    return null;
+  if (inspection.kind==="test-only"){
+    return{
+        type:"test-only",
+        repoRoot,
+        baseRef,
+        inspection,
+    };
+  }
+
+  if (inspection.kind==="other-only"){
+    return{
+        type: "no-proof-required",
+        repoRoot,
+        baseRef,
+        inspection,
+    };
   }
 
   const baseWorktree = createBaseWorktree(

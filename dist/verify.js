@@ -15,8 +15,21 @@ export function verifyRepository(targetRepo, baseRef) {
             inspection
         };
     }
-    if (changedTestFiles.length === 0) {
-        return null;
+    if (inspection.kind === "test-only") {
+        return {
+            type: "test-only",
+            repoRoot,
+            baseRef,
+            inspection,
+        };
+    }
+    if (inspection.kind === "other-only") {
+        return {
+            type: "no-proof-required",
+            repoRoot,
+            baseRef,
+            inspection,
+        };
     }
     const baseWorktree = createBaseWorktree(repoRoot, baseRef);
     try {

@@ -24,36 +24,49 @@ const result = verifyRepository(
   baseRef
 );
 
-if (result === null) {
-  console.log(
-    "No changed regression tests found."
-  );
-
-  process.exit(0);
-}
-
 console.log("PRProof");
 
 console.log(
   `Repository: ${result.repoRoot}`
 );
 
-if(result.type==="insufficient-evidence"){
+if (result.type === "insufficient-evidence") {
   console.log("❌ INSUFFICIENT EVIDENCE");
-  console.log("Production code changed but no regression test was added");
-  
-  process.exitCode = 1;
-}
 
+  console.log("Production code changed but no regression test was added.");
+
+  process.exitCode = 1;
+
+} 
+else if (result.type === "test-only") {
+  console.log("ℹ️ TEST-ONLY CHANGE");
+
+  console.log("No production code changed. Regression proof is not required.");
+
+  process.exitCode = 0;
+
+} 
+else if (result.type === "no-proof-required") {
+  console.log("ℹ️ NO REGRESSION EVIDENCE REQUIRED");
+
+  console.log("No production or regression-test changes were detected.");
+
+  process.exitCode = 0;
+
+} 
 else {
   console.log(`Changed tests: ${result.changedTestFiles.join(", ")}`);
+
   console.log();
+
   console.log(`${result.baseRef}: ${result.baseResult.status}`);
 
   console.log(`HEAD: ${result.headResult.status}`);
+
   console.log();
 
   console.log(getVerdictMessage(result.verdict));
 
-  process.exitCode = getExitCode(result.verdict);
+  process.exitCode =
+    getExitCode(result.verdict);
 }
