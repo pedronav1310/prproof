@@ -1,6 +1,6 @@
 import {createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree,} from "./git.js";
 
-import {copyTestsToBase, linkNodeModules, runTests, type TestRunResult,} from "./tests.js";
+import {copyTestsToBase, linkNodeModules, runRegressionTests, runFullSuite, type TestRunResult,} from "./tests.js";
 
 import {inspectChanges, type PrInspection,} from "./inspect.js";
 
@@ -9,6 +9,14 @@ import {classifyProof, type ProofVerdict,} from "./proof.js";
 export type VerificationMode =
   | "regression"
   | "general";
+  
+export type GeneralVerificationResult = {
+  type: "general";
+  repoRoot: string;
+  baseRef: string;
+  inspection: PrInspection;
+  headSuiteResult: TestRunResult;
+};
 
 export type TestOnlyResult = {
   type: "test-only";
@@ -46,7 +54,8 @@ export type VerificationResult =
   | ProofVerificationResult
   | InsufficientEvidenceResult
   | TestOnlyResult
-  | NoProofRequiredResult;
+  | NoProofRequiredResult
+  | GeneralVerificationResult;
 
 export function verifyRepository(targetRepo: string, baseRef: string, mode:VerificationMode): VerificationResult{
   const repoRoot = getRepoRoot(targetRepo);
@@ -56,6 +65,27 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
   const inspection = inspectChanges(changedFiles);
 
   const changedTestFiles = inspection.testFiles;
+
+  if (inspection.kind==="other-only"){
+    return{
+        type: "no-proof-required",
+        repoRoot,
+        baseRef,
+        inspection,
+    };
+  }
+
+  if (mode === "general") {
+  const headSuiteResult = runFullSuite(repoRoot);
+
+  return {
+    type: "general",
+    repoRoot,
+    baseRef,
+    inspection,
+    headSuiteResult,
+    };
+  }
 
   if (inspection.kind==="production-without-tests"){
     return{
@@ -75,14 +105,7 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
     };
   }
 
-  if (inspection.kind==="other-only"){
-    return{
-        type: "no-proof-required",
-        repoRoot,
-        baseRef,
-        inspection,
-    };
-  }
+
 
   const baseWorktree = createBaseWorktree(
     repoRoot,
@@ -101,12 +124,12 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
       changedTestFiles
     );
 
-    const baseResult = runTests(
+    const baseResult = runRegressionTests(
       baseWorktree,
       changedTestFiles
     );
 
-    const headResult = runTests(
+    const headResult = runRegressionTests(
       repoRoot,
       changedTestFiles
     );

@@ -25,7 +25,26 @@ if (mode !== "general" && mode !== "regression") {
 const result = verifyRepository(targetRepo, baseRef, mode);
 console.log("PRProof");
 console.log(`Repository: ${result.repoRoot}`);
-if (result.type === "insufficient-evidence") {
+if (result.type === "general") {
+    console.log("GENERAL VERIFICATION");
+    console.log();
+    console.log(`HEAD suite: ${result.headSuiteResult.status}`);
+    console.log();
+    if (result.headSuiteResult.status === "passed") {
+        console.log("✅ General verification passed.");
+        process.exitCode = 0;
+    }
+    else if (result.headSuiteResult.status === "failed") {
+        console.log("❌ General verification failed.");
+        process.exitCode = 1;
+    }
+    else {
+        console.log("❌ ERROR");
+        console.log("PRProof could not reliably execute the full test suite.");
+        process.exitCode = 2;
+    }
+}
+else if (result.type === "insufficient-evidence") {
     console.log("❌ INSUFFICIENT EVIDENCE");
     console.log("Production code changed but no regression test was added.");
     process.exitCode = 1;

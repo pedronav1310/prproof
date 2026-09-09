@@ -22,7 +22,7 @@ export function copyTestsToBase(repoRoot, baseWorktree, testFiles) {
         copyFileSync(source, destination);
     }
 }
-export function runTests(cwd, testFiles) {
+function runVitest(cwd, testFiles = []) {
     const reportPath = join(cwd, ".pproof-vitest-result.json");
     try {
         const result = spawnSync("npx", ["vitest", "run", ...testFiles, "--reporter=json", `--outputFile=${reportPath}`], {
@@ -71,4 +71,10 @@ export function runTests(cwd, testFiles) {
             unlinkSync(reportPath);
         }
     }
+}
+export function runRegressionTests(cwd, testFiles) {
+    return runVitest(cwd, testFiles);
+}
+export function runFullSuite(cwd) {
+    return runVitest(cwd);
 }
