@@ -1,3 +1,12 @@
+export function getExitCode(verdict) {
+    if (verdict === "proven") {
+        return 0;
+    }
+    if (verdict === "error") {
+        return 2;
+    }
+    return 1;
+}
 export function classifyProof(base, branch) {
     if (base.status === "error" || branch.status === "error") {
         return "error";

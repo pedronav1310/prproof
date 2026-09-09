@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classifyProof } from "../src/proof.js";
+import { classifyProof, getExitCode } from "../src/proof.js";
 
 describe("classifyProof", () => {
 
@@ -46,6 +46,29 @@ describe("classifyProof", () => {
     );
 
     expect(result).toBe("error");
+  });
+
+});
+describe("getExitCode", () => {
+
+  test("proven returns 0", () => {
+    expect(getExitCode("proven")).toBe(0);
+  });
+
+  test("unproven returns 1", () => {
+    expect(getExitCode("unproven")).toBe(1);
+  });
+
+  test("still-broken returns 1", () => {
+    expect(getExitCode("still-broken")).toBe(1);
+  });
+
+  test("regression returns 1", () => {
+    expect(getExitCode("regression")).toBe(1);
+  });
+
+  test("error returns 2", () => {
+    expect(getExitCode("error")).toBe(2);
   });
 
 });

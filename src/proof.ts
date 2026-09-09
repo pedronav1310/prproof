@@ -6,6 +6,17 @@ export type ProofVerdict =
   | "still-broken"
   | "regression"
   | "error";
+export function getExitCode(verdict: ProofVerdict): number {
+  if (verdict === "proven") {
+    return 0;
+  }
+
+  if (verdict === "error") {
+    return 2;
+  }
+
+  return 1;
+}
 
 export function classifyProof(base: TestRunResult, branch: TestRunResult): ProofVerdict {
   if (base.status === "error" || branch.status ==="error"){

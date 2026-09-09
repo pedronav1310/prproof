@@ -4,7 +4,7 @@ import {createBaseWorktree, getChangedFiles, getCurrentBranch, getRepoRoot, remo
 
 import {copyTestsToBase, getChangedTestFiles, runTests, linkNodeModules} from "./tests.js";
 
-import {classifyProof, getVerdictMessage,} from "./proof.js";
+import {classifyProof, getVerdictMessage, getExitCode} from "./proof.js";
 
 const targetRepo = process.argv[2] ?? process.cwd();
 
@@ -56,6 +56,7 @@ try {
   console.log(`${currentBranch}: ${branchResult.status}`);
   console.log();
   console.log(getVerdictMessage(verdict));
+  process.exitCode = getExitCode(verdict);
 
 } finally {
   removeWorktree(
