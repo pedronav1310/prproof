@@ -6,6 +6,10 @@ import {inspectChanges, type PrInspection,} from "./inspect.js";
 
 import {classifyProof, type ProofVerdict,} from "./proof.js";
 
+export type VerificationMode =
+  | "regression"
+  | "general";
+
 export type TestOnlyResult = {
   type: "test-only";
   repoRoot: string;
@@ -44,7 +48,7 @@ export type VerificationResult =
   | TestOnlyResult
   | NoProofRequiredResult;
 
-export function verifyRepository(targetRepo: string, baseRef: string): VerificationResult{
+export function verifyRepository(targetRepo: string, baseRef: string, mode:VerificationMode): VerificationResult{
   const repoRoot = getRepoRoot(targetRepo);
 
   const changedFiles = getChangedFiles(targetRepo, baseRef);

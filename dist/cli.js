@@ -8,12 +8,21 @@ const { values, positionals } = parseArgs({
             type: "string",
             default: "main",
         },
+        mode: {
+            type: "string",
+            default: "general",
+        },
     },
     allowPositionals: true,
 });
+const mode = values.mode;
 const targetRepo = positionals[0] ?? process.cwd();
 const baseRef = values.base;
-const result = verifyRepository(targetRepo, baseRef);
+if (mode !== "general" && mode !== "regression") {
+    console.error(`Invalid mode: ${mode}. Expected "general" or "regression".`);
+    process.exit(2);
+}
+const result = verifyRepository(targetRepo, baseRef, mode);
 console.log("PRProof");
 console.log(`Repository: ${result.repoRoot}`);
 if (result.type === "insufficient-evidence") {

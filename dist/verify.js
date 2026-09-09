@@ -2,7 +2,7 @@ import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } fro
 import { copyTestsToBase, linkNodeModules, runTests, } from "./tests.js";
 import { inspectChanges, } from "./inspect.js";
 import { classifyProof, } from "./proof.js";
-export function verifyRepository(targetRepo, baseRef) {
+export function verifyRepository(targetRepo, baseRef, mode) {
     const repoRoot = getRepoRoot(targetRepo);
     const changedFiles = getChangedFiles(targetRepo, baseRef);
     const inspection = inspectChanges(changedFiles);
