@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classifyProof, getExitCode } from "../src/proof.js";
+import { classifyProof, getExitCode, getVerdictMessage} from "../src/proof.js";
 
 describe("classifyProof", () => {
 
@@ -71,4 +71,12 @@ describe("getExitCode", () => {
     expect(getExitCode("error")).toBe(2);
   });
 
+});
+
+describe("getVerdictMessage", () => {
+  test("regression message refers to the base revision instead of main", () => {
+    expect(getVerdictMessage("regression")).toContain(
+      "base revision"
+    );
+  });
 });

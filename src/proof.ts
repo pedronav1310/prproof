@@ -52,6 +52,6 @@ export function getVerdictMessage(verdict: ProofVerdict): string {
       return "❌ STILL BROKEN\nThe regression test still fails after the patch.";
 
     case "regression":
-      return "❌ POSSIBLE REGRESSION\nThe test passes on main but fails after the patch.";
+      return "❌ POSSIBLE REGRESSION\nThe test passes on the base revision but fails after the patch.";
   }
 }
