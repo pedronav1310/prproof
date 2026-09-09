@@ -1,12 +1,15 @@
 import {createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree,} from "./git.js";
 
-import {copyTestsToBase, getChangedTestFiles, linkNodeModules, runTests, type TestRunResult,} from "./tests.js";
+import {copyTestsToBase, linkNodeModules, runTests, type TestRunResult,} from "./tests.js";
+
+import {inspectChanges, type PrInspection,} from "./inspect.js";
 
 import {classifyProof, type ProofVerdict,} from "./proof.js";
 
 export type VerificationResult = {
   repoRoot: string;
   baseRef: string;
+  inspection: PrInspection;
   changedTestFiles: string[];
   baseResult: TestRunResult;
   headResult: TestRunResult;
@@ -16,13 +19,11 @@ export type VerificationResult = {
 export function verifyRepository(targetRepo: string, baseRef: string): VerificationResult | null {
   const repoRoot = getRepoRoot(targetRepo);
 
-  const changedFiles = getChangedFiles(
-    targetRepo,
-    baseRef
-  );
+  const changedFiles = getChangedFiles(targetRepo, baseRef);
 
-  const changedTestFiles =
-    getChangedTestFiles(changedFiles);
+  const inspection = inspectChanges(changedFiles);
+
+  const changedTestFiles = inspection.testFiles;
 
   if (changedTestFiles.length === 0) {
     return null;
@@ -63,6 +64,7 @@ export function verifyRepository(targetRepo: string, baseRef: string): Verificat
     return {
       repoRoot,
       baseRef,
+      inspection,
       changedTestFiles,
       baseResult,
       headResult,

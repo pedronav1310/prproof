@@ -1,10 +1,12 @@
 import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } from "./git.js";
-import { copyTestsToBase, getChangedTestFiles, linkNodeModules, runTests, } from "./tests.js";
+import { copyTestsToBase, linkNodeModules, runTests, } from "./tests.js";
+import { inspectChanges, } from "./inspect.js";
 import { classifyProof, } from "./proof.js";
 export function verifyRepository(targetRepo, baseRef) {
     const repoRoot = getRepoRoot(targetRepo);
     const changedFiles = getChangedFiles(targetRepo, baseRef);
-    const changedTestFiles = getChangedTestFiles(changedFiles);
+    const inspection = inspectChanges(changedFiles);
+    const changedTestFiles = inspection.testFiles;
     if (changedTestFiles.length === 0) {
         return null;
     }
@@ -18,6 +20,7 @@ export function verifyRepository(targetRepo, baseRef) {
         return {
             repoRoot,
             baseRef,
+            inspection,
             changedTestFiles,
             baseResult,
             headResult,
