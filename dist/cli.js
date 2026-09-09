@@ -1,34 +1,30 @@
 #!/usr/bin/env node
-import { createBaseWorktree, getChangedFiles, getCurrentBranch, getRepoRoot, removeWorktree, } from "./git.js";
-import { copyTestsToBase, getChangedTestFiles, runTests, linkNodeModules } from "./tests.js";
-import { classifyProof, getVerdictMessage, getExitCode } from "./proof.js";
-const targetRepo = process.argv[2] ?? process.cwd();
-const repoRoot = getRepoRoot(targetRepo);
-const currentBranch = getCurrentBranch(targetRepo);
-const changedFiles = getChangedFiles(targetRepo);
-const changedTestFiles = getChangedTestFiles(changedFiles);
-if (changedTestFiles.length === 0) {
+import { verifyRepository, } from "./verify.js";
+import { getVerdictMessage, getExitCode, } from "./proof.js";
+import { parseArgs } from "node:util";
+const { values, positionals } = parseArgs({
+    options: {
+        base: {
+            type: "string",
+            default: "main",
+        },
+    },
+    allowPositionals: true,
+});
+const targetRepo = positionals[0] ?? process.cwd();
+const baseRef = values.base;
+const result = verifyRepository(targetRepo, baseRef);
+if (result === null) {
     console.log("No changed regression tests found.");
     process.exit(0);
 }
 console.log("PRProof");
-console.log(`Repository: ${repoRoot}`);
-console.log(`Current branch: ${currentBranch}`);
-console.log(`Changed tests: ${changedTestFiles.join(", ")}`);
-const baseWorktree = createBaseWorktree(repoRoot);
-try {
-    linkNodeModules(repoRoot, baseWorktree);
-    copyTestsToBase(repoRoot, baseWorktree, changedTestFiles);
-    const baseResult = runTests(baseWorktree, changedTestFiles);
-    const branchResult = runTests(repoRoot, changedTestFiles);
-    const verdict = classifyProof(baseResult, branchResult);
-    console.log();
-    console.log(`main: ${baseResult.status}`);
-    console.log(`${currentBranch}: ${branchResult.status}`);
-    console.log();
-    console.log(getVerdictMessage(verdict));
-    process.exitCode = getExitCode(verdict);
-}
-finally {
-    removeWorktree(repoRoot, baseWorktree);
-}
+console.log(`Repository: ${result.repoRoot}`);
+console.log(`Changed tests: ${result.changedTestFiles.join(", ")}`);
+console.log();
+console.log(`${result.baseRef}: ${result.baseResult.status}`);
+console.log(`HEAD: ${result.headResult.status}`);
+console.log();
+console.log(getVerdictMessage(result.verdict));
+process.exitCode =
+    getExitCode(result.verdict);
