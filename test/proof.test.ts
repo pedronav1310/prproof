@@ -79,4 +79,7 @@ describe("getVerdictMessage", () => {
       "base revision"
     );
   });
+  test("proven verdict message exists", () => {
+    expect(getVerdictMessage("proven")).toContain("PROVEN");
+  });
 });
