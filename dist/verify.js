@@ -47,6 +47,7 @@ export function verifyRepository(targetRepo, baseRef, mode) {
         copyTestsToBase(repoRoot, baseWorktree, changedTestFiles);
         const baseResult = runRegressionTests(baseWorktree, changedTestFiles);
         const headResult = runRegressionTests(repoRoot, changedTestFiles);
+        const headSuiteResult = runFullSuite(repoRoot);
         const verdict = classifyProof(baseResult, headResult);
         return {
             type: "proof",
@@ -56,6 +57,7 @@ export function verifyRepository(targetRepo, baseRef, mode) {
             changedTestFiles,
             baseResult,
             headResult,
+            headSuiteResult,
             verdict,
         };
     }

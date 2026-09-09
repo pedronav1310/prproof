@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { verifyRepository, } from "./verify.js";
-import { getVerdictMessage, getExitCode, } from "./proof.js";
+import { getVerdictMessage, } from "./proof.js";
 import { parseArgs } from "node:util";
 const { values, positionals } = parseArgs({
     options: {
@@ -64,8 +64,16 @@ else {
     console.log();
     console.log(`${result.baseRef}: ${result.baseResult.status}`);
     console.log(`HEAD: ${result.headResult.status}`);
+    console.log(`HEAD suite: ${result.headSuiteResult.status}`);
     console.log();
     console.log(getVerdictMessage(result.verdict));
-    process.exitCode =
-        getExitCode(result.verdict);
+    if (result.verdict === "proven" && result.headSuiteResult.status === "passed") {
+        process.exitCode = 0;
+    }
+    else if (result.verdict === "error" || result.headSuiteResult.status === "error") {
+        process.exitCode = 2;
+    }
+    else {
+        process.exitCode = 1;
+    }
 }

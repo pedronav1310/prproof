@@ -40,6 +40,7 @@ export type ProofVerificationResult = {
   changedTestFiles: string[];
   baseResult: TestRunResult;
   headResult: TestRunResult;
+  headSuiteResult: TestRunResult;
   verdict: ProofVerdict;
 };
 
@@ -134,6 +135,8 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
       changedTestFiles
     );
 
+    const headSuiteResult = runFullSuite(repoRoot);
+
     const verdict = classifyProof(
       baseResult,
       headResult
@@ -147,6 +150,7 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
       changedTestFiles,
       baseResult,
       headResult,
+      headSuiteResult,
       verdict,
     };
   } finally {
