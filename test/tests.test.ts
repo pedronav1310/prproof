@@ -42,5 +42,16 @@ describe("getChangedTestFiles", () => {
 
     expect(result).toEqual([]);
   });
+  
+  test("returns changed spec files", () => {
+    const changedFiles = [
+      "src/math.ts",
+      "test/math.spec.ts",
+  ];
+
+    const result = getChangedTestFiles(changedFiles);
+
+    expect(result).toEqual(["test/math.spec.ts"]);
+  });
 
 });
