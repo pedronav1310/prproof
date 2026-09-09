@@ -79,4 +79,10 @@ describe("getVerdictMessage", () => {
       "base revision"
     );
   });
+  test("proven message refers to base revision and HEAD", () => {
+    const message = getVerdictMessage("proven");
+
+    expect(message).toContain("base revision");
+    expect(message).toContain("HEAD");
+});
 });

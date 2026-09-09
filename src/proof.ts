@@ -43,7 +43,7 @@ export function getVerdictMessage(verdict: ProofVerdict): string {
       return "❌ ERROR\nPRProof could not reliably execute the regression tests.";
 
     case "proven":
-      return "✅ PROVEN\nThe regression test fails before the patch and passes after it.";
+      return "✅ PROVEN\nThe regression test fails on the base revision and passes on HEAD.";
 
     case "unproven":
       return "⚠️ UNPROVEN\nThe test also passes before the patch.";
