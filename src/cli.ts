@@ -1,66 +1,63 @@
 #!/usr/bin/env node
 
-import {createBaseWorktree, getChangedFiles, getCurrentBranch, getRepoRoot, removeWorktree,} from "./git.js";
+import {verifyRepository,} from "./verify.js";
 
-import {copyTestsToBase, getChangedTestFiles, runTests, linkNodeModules} from "./tests.js";
+import {getVerdictMessage, getExitCode,} from "./proof.js";
 
-import {classifyProof, getVerdictMessage, getExitCode} from "./proof.js";
+import { parseArgs } from "node:util";
 
-const targetRepo = process.argv[2] ?? process.cwd();
+const { values, positionals } = parseArgs({
+  options: {
+    base: {
+      type: "string",
+      default: "main",
+    },
+  },
+  allowPositionals: true,
+});
 
-const repoRoot = getRepoRoot(targetRepo);
-const currentBranch = getCurrentBranch(targetRepo);
+const targetRepo = positionals[0] ?? process.cwd();
+const baseRef = values.base;
 
-const changedFiles = getChangedFiles(targetRepo);
-const changedTestFiles = getChangedTestFiles(changedFiles);
+const result = verifyRepository(
+  targetRepo,
+  baseRef
+);
 
-if (changedTestFiles.length === 0) {
-  console.log("No changed regression tests found.");
+if (result === null) {
+  console.log(
+    "No changed regression tests found."
+  );
+
   process.exit(0);
 }
 
 console.log("PRProof");
-console.log(`Repository: ${repoRoot}`);
-console.log(`Current branch: ${currentBranch}`);
-console.log(`Changed tests: ${changedTestFiles.join(", ")}`);
 
-const baseWorktree = createBaseWorktree(repoRoot);
+console.log(
+  `Repository: ${result.repoRoot}`
+);
 
-try {
 
-  linkNodeModules(repoRoot, baseWorktree);
+console.log(
+  `Changed tests: ${result.changedTestFiles.join(", ")}`
+);
 
-  copyTestsToBase(
-    repoRoot,
-    baseWorktree,
-    changedTestFiles
-  );
+console.log();
 
-  const baseResult = runTests(
-    baseWorktree,
-    changedTestFiles
-  );
+console.log(
+  `${result.baseRef}: ${result.baseResult.status}`
+);
 
-  const branchResult = runTests(
-    repoRoot,
-    changedTestFiles
-  );
+console.log(
+  `HEAD: ${result.headResult.status}`
+);
 
-  const verdict = classifyProof(
-    baseResult,
-    branchResult
-  );
+console.log();
 
-  console.log();
-  console.log(`main: ${baseResult.status}`);
-  console.log(`${currentBranch}: ${branchResult.status}`);
-  console.log();
-  console.log(getVerdictMessage(verdict));
-  process.exitCode = getExitCode(verdict);
+console.log(
+  getVerdictMessage(result.verdict)
+);
 
-} finally {
-  removeWorktree(
-    repoRoot,
-    baseWorktree
-  );
-}
+process.exitCode =
+  getExitCode(result.verdict);

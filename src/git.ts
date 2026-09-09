@@ -18,9 +18,9 @@ export function getCurrentBranch(cwd: string): string {
   return runGit(["branch", "--show-current"], cwd);
 }
 
-export function getChangedFiles(cwd: string): string[] {
+export function getChangedFiles(cwd: string, baseRef: string): string[] {
   const output = runGit(
-    ["diff", "--name-only", "main...HEAD"],
+    ["diff", "--name-only", `${baseRef}...HEAD`],
     cwd
   );
 
@@ -31,18 +31,19 @@ export function getChangedFiles(cwd: string): string[] {
   return output.split("\n");
 }
 
-export function createBaseWorktree(cwd: string): string {
+export function createBaseWorktree(cwd: string, baseRef: string): string {
   const tempPath = mkdtempSync(
     join(tmpdir(), "prproof-")
   );
 
   runGit(
-    ["worktree", "add", "--detach", tempPath, "main"],
+    ["worktree", "add", "--detach", tempPath, baseRef],
     cwd
   );
 
   return tempPath;
 }
+
 
 export function removeWorktree(
   repoRoot: string,

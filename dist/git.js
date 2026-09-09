@@ -14,16 +14,16 @@ export function getRepoRoot(cwd) {
 export function getCurrentBranch(cwd) {
     return runGit(["branch", "--show-current"], cwd);
 }
-export function getChangedFiles(cwd) {
-    const output = runGit(["diff", "--name-only", "main...HEAD"], cwd);
+export function getChangedFiles(cwd, baseRef) {
+    const output = runGit(["diff", "--name-only", `${baseRef}...HEAD`], cwd);
     if (!output) {
         return [];
     }
     return output.split("\n");
 }
-export function createBaseWorktree(cwd) {
+export function createBaseWorktree(cwd, baseRef) {
     const tempPath = mkdtempSync(join(tmpdir(), "prproof-"));
-    runGit(["worktree", "add", "--detach", tempPath, "main"], cwd);
+    runGit(["worktree", "add", "--detach", tempPath, baseRef], cwd);
     return tempPath;
 }
 export function removeWorktree(repoRoot, worktreePath) {
