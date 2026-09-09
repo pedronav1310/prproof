@@ -6,7 +6,8 @@ import {inspectChanges, type PrInspection,} from "./inspect.js";
 
 import {classifyProof, type ProofVerdict,} from "./proof.js";
 
-export type VerificationResult = {
+export type ProofVerificationResult = {
+  type: "proof";
   repoRoot: string;
   baseRef: string;
   inspection: PrInspection;
@@ -16,6 +17,17 @@ export type VerificationResult = {
   verdict: ProofVerdict;
 };
 
+export type InsufficientEvidenceResult = {
+  type: "insufficient-evidence";
+  repoRoot: string;
+  baseRef: string;
+  inspection: PrInspection;
+};
+
+export type VerificationResult =
+  | ProofVerificationResult
+  | InsufficientEvidenceResult;
+
 export function verifyRepository(targetRepo: string, baseRef: string): VerificationResult | null {
   const repoRoot = getRepoRoot(targetRepo);
 
@@ -24,6 +36,15 @@ export function verifyRepository(targetRepo: string, baseRef: string): Verificat
   const inspection = inspectChanges(changedFiles);
 
   const changedTestFiles = inspection.testFiles;
+
+  if (inspection.kind==="production-without-tests"){
+    return{
+        type:"insufficient-evidence",
+        repoRoot,
+        baseRef,
+        inspection
+    };
+  }
 
   if (changedTestFiles.length === 0) {
     return null;
@@ -62,6 +83,7 @@ export function verifyRepository(targetRepo: string, baseRef: string): Verificat
     );
 
     return {
+      type:"proof",
       repoRoot,
       baseRef,
       inspection,

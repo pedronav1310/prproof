@@ -38,26 +38,22 @@ console.log(
   `Repository: ${result.repoRoot}`
 );
 
+if(result.type==="insufficient-evidence"){
+  console.log("❌ INSUFFICIENT EVIDENCE");
+  console.log("Production code changed but no regression test was added");
+  
+  process.exitCode = 1;
+}
 
-console.log(
-  `Changed tests: ${result.changedTestFiles.join(", ")}`
-);
+else {
+  console.log(`Changed tests: ${result.changedTestFiles.join(", ")}`);
+  console.log();
+  console.log(`${result.baseRef}: ${result.baseResult.status}`);
 
-console.log();
+  console.log(`HEAD: ${result.headResult.status}`);
+  console.log();
 
-console.log(
-  `${result.baseRef}: ${result.baseResult.status}`
-);
+  console.log(getVerdictMessage(result.verdict));
 
-console.log(
-  `HEAD: ${result.headResult.status}`
-);
-
-console.log();
-
-console.log(
-  getVerdictMessage(result.verdict)
-);
-
-process.exitCode =
-  getExitCode(result.verdict);
+  process.exitCode = getExitCode(result.verdict);
+}

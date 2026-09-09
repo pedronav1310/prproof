@@ -7,6 +7,14 @@ export function verifyRepository(targetRepo, baseRef) {
     const changedFiles = getChangedFiles(targetRepo, baseRef);
     const inspection = inspectChanges(changedFiles);
     const changedTestFiles = inspection.testFiles;
+    if (inspection.kind === "production-without-tests") {
+        return {
+            type: "insufficient-evidence",
+            repoRoot,
+            baseRef,
+            inspection
+        };
+    }
     if (changedTestFiles.length === 0) {
         return null;
     }
@@ -18,6 +26,7 @@ export function verifyRepository(targetRepo, baseRef) {
         const headResult = runTests(repoRoot, changedTestFiles);
         const verdict = classifyProof(baseResult, headResult);
         return {
+            type: "proof",
             repoRoot,
             baseRef,
             inspection,
