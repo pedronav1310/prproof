@@ -5,6 +5,8 @@ import { parseArgs } from "node:util";
 import { JestRunner } from "./jest-runner.js";
 import { VitestRunner } from "./vitest-runner.js";
 import {} from "./test-runner.js";
+import { getRepoRoot } from "./git.js";
+import { loadPrProofConfig } from "./config.js";
 const { values, positionals } = parseArgs({
     options: {
         base: {
@@ -21,7 +23,6 @@ const { values, positionals } = parseArgs({
         },
         runner: {
             type: "string",
-            default: "vitest",
         },
         testConfig: {
             type: "string",
@@ -35,8 +36,19 @@ const { values, positionals } = parseArgs({
 const mode = values.mode;
 const targetRepo = positionals[0] ?? process.cwd();
 const baseRef = values.base;
-const runner = values.runner;
-const nodeMemoryMb = values.nodeMemoryMb ? Number(values.nodeMemoryMb) : undefined;
+const repoRoot = getRepoRoot(targetRepo);
+let config;
+try {
+    config = loadPrProofConfig(repoRoot);
+}
+catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`Invalid PRProof config: ${message}`);
+    process.exit(2);
+}
+const runner = values.runner ?? config.runner ?? "vitest";
+const testConfig = values.testConfig ?? config.testConfig;
+const nodeMemoryMb = values.nodeMemoryMb !== undefined ? Number(values.nodeMemoryMb) : config.nodeMemoryMb;
 if (mode !== "general" && mode !== "regression") {
     console.error(`Invalid mode: ${mode}. Expected "general" or "regression".`);
     process.exit(2);
@@ -50,8 +62,11 @@ if (nodeMemoryMb !== undefined && (!Number.isInteger(nodeMemoryMb) || nodeMemory
     process.exit(2);
 }
 let testRunner;
-if (runner == "jest") {
-    testRunner = new JestRunner({ config: values.testConfig, nodeMemoryMb, });
+if (runner === "jest") {
+    testRunner = new JestRunner({
+        config: testConfig,
+        nodeMemoryMb,
+    });
 }
 else {
     testRunner = new VitestRunner();
