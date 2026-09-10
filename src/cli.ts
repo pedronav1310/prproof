@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import {getVerificationReadiness, verifyRepository,} from "./verify.js";
+import {getVerificationReasons, getVerificationReadiness, verifyRepository,} from "./verify.js";
 
 import {getVerdictMessage,} from "./proof.js";
 
@@ -66,12 +66,14 @@ function getVerificationExitCode(result: ReturnType<typeof verifyRepository>): n
 function toJsonResult(result: ReturnType<typeof verifyRepository>, mode: "general" | "regression") {
 
   const readiness = getVerificationReadiness(result);
+  const reasons = getVerificationReasons(result);
 
   if (result.type === "general") {
     return {
       mode,
       type: result.type,
       readiness,
+      reasons,
       headSuite: result.headSuiteResult.status,
     };
   }
@@ -81,6 +83,7 @@ function toJsonResult(result: ReturnType<typeof verifyRepository>, mode: "genera
       mode,
       type: result.type,
       readiness,
+      reasons,
       verdict: result.verdict,
       base: result.baseResult.status,
       head: result.headResult.status,
@@ -92,6 +95,7 @@ function toJsonResult(result: ReturnType<typeof verifyRepository>, mode: "genera
     mode,
     type: result.type,
     readiness,
+    reasons,
   };
 }
 

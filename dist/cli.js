@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { getVerificationReadiness, verifyRepository, } from "./verify.js";
+import { getVerificationReasons, getVerificationReadiness, verifyRepository, } from "./verify.js";
 import { getVerdictMessage, } from "./proof.js";
 import { parseArgs } from "node:util";
 const { values, positionals } = parseArgs({
@@ -52,11 +52,13 @@ function getVerificationExitCode(result) {
 }
 function toJsonResult(result, mode) {
     const readiness = getVerificationReadiness(result);
+    const reasons = getVerificationReasons(result);
     if (result.type === "general") {
         return {
             mode,
             type: result.type,
             readiness,
+            reasons,
             headSuite: result.headSuiteResult.status,
         };
     }
@@ -65,6 +67,7 @@ function toJsonResult(result, mode) {
             mode,
             type: result.type,
             readiness,
+            reasons,
             verdict: result.verdict,
             base: result.baseResult.status,
             head: result.headResult.status,
@@ -75,6 +78,7 @@ function toJsonResult(result, mode) {
         mode,
         type: result.type,
         readiness,
+        reasons,
     };
 }
 const result = verifyRepository(targetRepo, baseRef, mode);
