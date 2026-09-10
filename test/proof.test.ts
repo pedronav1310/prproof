@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { classifyProof, getExitCode, getVerdictMessage} from "../src/proof.js";
+import { classifyProof, getExitCode, getVerdictMessage} from "../src/verification/proof.js";
 
 describe("classifyProof", () => {
 

@@ -2,7 +2,7 @@ import {describe, expect,test,} from "vitest";
 
 import {
   inspectChanges,
-} from "../src/inspect.js";
+} from "../src/verification/inspect.js";
 
 describe("inspectChanges", () => {
   test("classifies production files with tests", () => {

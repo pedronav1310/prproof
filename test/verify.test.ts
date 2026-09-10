@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import {getVerificationReasons, getVerificationReadiness, type VerificationResult,} from "../src/verify.js";
+import {getVerificationReasons, getVerificationReadiness, type VerificationResult,} from "../src/verification/verify.js";
 
 const inspection = {
   productionFiles: ["src/payment.ts"],
