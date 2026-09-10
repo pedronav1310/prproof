@@ -1,5 +1,7 @@
 import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } from "./git.js";
-import { copyTestsToBase, linkNodeModules, runRegressionTests, runFullSuite, } from "./tests.js";
+import { copyTestsToBase, linkNodeModules } from "./tests.js";
+import {} from "./test-runner.js";
+import { VitestRunner, } from "./vitest-runner.js";
 import { inspectChanges, } from "./inspect.js";
 import { classifyProof, } from "./proof.js";
 const reasonByVerdict = {
@@ -45,7 +47,7 @@ export function getVerificationReadiness(result) {
         ? "ready"
         : "not-ready";
 }
-export function verifyRepository(targetRepo, baseRef, mode) {
+export function verifyRepository(targetRepo, baseRef, mode, testRunner = new VitestRunner()) {
     const repoRoot = getRepoRoot(targetRepo);
     const changedFiles = getChangedFiles(targetRepo, baseRef);
     const inspection = inspectChanges(changedFiles);
@@ -59,7 +61,7 @@ export function verifyRepository(targetRepo, baseRef, mode) {
         };
     }
     if (mode === "general") {
-        const headSuiteResult = runFullSuite(repoRoot);
+        const headSuiteResult = testRunner.runFullSuite(repoRoot);
         return {
             type: "general",
             repoRoot,
@@ -88,9 +90,9 @@ export function verifyRepository(targetRepo, baseRef, mode) {
     try {
         linkNodeModules(repoRoot, baseWorktree);
         copyTestsToBase(repoRoot, baseWorktree, changedTestFiles);
-        const baseResult = runRegressionTests(baseWorktree, changedTestFiles);
-        const headResult = runRegressionTests(repoRoot, changedTestFiles);
-        const headSuiteResult = runFullSuite(repoRoot);
+        const baseResult = testRunner.runRegressionTests(baseWorktree, changedTestFiles);
+        const headResult = testRunner.runRegressionTests(repoRoot, changedTestFiles);
+        const headSuiteResult = testRunner.runFullSuite(repoRoot);
         const verdict = classifyProof(baseResult, headResult);
         return {
             type: "proof",

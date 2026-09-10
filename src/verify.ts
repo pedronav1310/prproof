@@ -1,6 +1,10 @@
 import {createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree,} from "./git.js";
 
-import {copyTestsToBase, linkNodeModules, runRegressionTests, runFullSuite, type TestRunResult,} from "./tests.js";
+import {copyTestsToBase, linkNodeModules} from "./tests.js";
+
+import { type TestRunResult, type TestRunner, } from "./test-runner.js";
+
+import { VitestRunner , } from "./vitest-runner.js";
 
 import {inspectChanges, type PrInspection,} from "./inspect.js";
 
@@ -129,7 +133,7 @@ export function getVerificationReadiness(result: VerificationResult): Verificati
     : "not-ready";
 }
 
-export function verifyRepository(targetRepo: string, baseRef: string, mode:VerificationMode): VerificationResult{
+export function verifyRepository(targetRepo: string, baseRef: string, mode:VerificationMode, testRunner: TestRunner = new VitestRunner()): VerificationResult{
   const repoRoot = getRepoRoot(targetRepo);
 
   const changedFiles = getChangedFiles(targetRepo, baseRef);
@@ -148,7 +152,7 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
   }
 
   if (mode === "general") {
-  const headSuiteResult = runFullSuite(repoRoot);
+  const headSuiteResult = testRunner.runFullSuite(repoRoot);
 
   return {
     type: "general",
@@ -196,17 +200,17 @@ export function verifyRepository(targetRepo: string, baseRef: string, mode:Verif
       changedTestFiles
     );
 
-    const baseResult = runRegressionTests(
+    const baseResult = testRunner.runRegressionTests(
       baseWorktree,
       changedTestFiles
     );
 
-    const headResult = runRegressionTests(
+    const headResult = testRunner.runRegressionTests(
       repoRoot,
       changedTestFiles
     );
 
-    const headSuiteResult = runFullSuite(repoRoot);
+    const headSuiteResult = testRunner.runFullSuite(repoRoot);
 
     const verdict = classifyProof(
       baseResult,

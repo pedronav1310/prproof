@@ -1,5 +1,4 @@
-import { spawnSync } from "node:child_process";
-import { copyFileSync, mkdirSync, readFileSync, unlinkSync, existsSync, symlinkSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, symlinkSync, } from "node:fs";
 import { dirname, join } from "node:path";
 export function linkNodeModules(repoRoot, baseWorktree) {
     const source = join(repoRoot, "node_modules");
@@ -24,60 +23,4 @@ export function copyTestsToBase(repoRoot, baseWorktree, testFiles) {
         });
         copyFileSync(source, destination);
     }
-}
-function runVitest(cwd, testFiles = []) {
-    const reportPath = join(cwd, ".pproof-vitest-result.json");
-    try {
-        const result = spawnSync("npx", ["vitest", "run", ...testFiles, "--reporter=json", `--outputFile=${reportPath}`], {
-            cwd,
-            encoding: "utf8",
-        });
-        const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
-        if (result.error) {
-            return {
-                status: "error",
-                output,
-            };
-        }
-        if (!existsSync(reportPath)) {
-            return {
-                status: "error",
-                output,
-            };
-        }
-        const report = JSON.parse(readFileSync(reportPath, "utf8"));
-        if (report.numTotalTests === 0) {
-            return {
-                status: "error",
-                output,
-            };
-        }
-        if (report.numFailedTests > 0) {
-            return {
-                status: "failed",
-                output
-            };
-        }
-        if (report.success) {
-            return {
-                status: "passed",
-                output,
-            };
-        }
-        return {
-            status: "error",
-            output,
-        };
-    }
-    finally {
-        if (existsSync(reportPath)) {
-            unlinkSync(reportPath);
-        }
-    }
-}
-export function runRegressionTests(cwd, testFiles) {
-    return runVitest(cwd, testFiles);
-}
-export function runFullSuite(cwd) {
-    return runVitest(cwd);
 }
