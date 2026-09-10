@@ -28,6 +28,9 @@ const { values, positionals } = parseArgs({
     testConfig:{
       type:"string",
     },
+    nodeMemoryMb:{
+      type: "string",
+    },
   },
   allowPositionals: true,
 });
@@ -37,6 +40,7 @@ const mode = values.mode;
 const targetRepo = positionals[0] ?? process.cwd();
 const baseRef = values.base;
 const runner = values.runner;
+const nodeMemoryMb = values.nodeMemoryMb ? Number(values.nodeMemoryMb) : undefined;
 
 if (mode !== "general" && mode !== "regression") {
   console.error(`Invalid mode: ${mode}. Expected "general" or "regression".`);
@@ -50,10 +54,16 @@ if (runner !== "vitest" && runner !== "jest") {
   process.exit(2);
 }
 
+if (nodeMemoryMb !== undefined && (!Number.isInteger(nodeMemoryMb) || nodeMemoryMb <= 0)) {
+  console.error(`Invalid nodeMemoryMb: ${values.nodeMemoryMb}. Expected a positive integer.`);
+
+  process.exit(2);
+}
+
 let testRunner: TestRunner;
 
 if (runner == "jest"){
-  testRunner = new JestRunner({config: values.testConfig,});
+  testRunner = new JestRunner({config: values.testConfig, nodeMemoryMb,});
   
 }
 else{

@@ -26,9 +26,14 @@ export class JestRunner {
             args.push(`--config=${this.options.config}`);
         }
         try {
+            const nodeOptions = this.options.nodeMemoryMb ? `--max-old-space-size=${this.options.nodeMemoryMb}` : process.env.NODE_OPTIONS;
             const result = spawnSync("npx", args, {
                 cwd,
                 encoding: "utf8",
+                env: {
+                    ...process.env,
+                    ...(nodeOptions ? { NODE_OPTIONS: nodeOptions } : {}),
+                }
             });
             const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`.trim();
             if (result.error) {
