@@ -32,4 +32,4 @@ jobs:
         run: npm run build
 
       - name: Verify regression evidence
-        run: node dist/cli.js --base "${{ github.event.pull_request.base.sha }}" --mode general
+        run: node dist/cli/cli.js --base "${{ github.event.pull_request.base.sha }}" --mode general
