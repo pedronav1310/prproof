@@ -1,10 +1,10 @@
-import {createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree,} from "./git.js";
+import {createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree,} from "../git/git.js";
 
-import {copyTestsToBase, linkNodeModules} from "./tests.js";
+import {copyTestsToBase, linkNodeModules} from "../test-support/tests.js";
 
-import { type TestRunResult, type TestRunner, } from "./test-runner.js";
+import { type TestRunResult, type TestRunner, } from "../runners/test-runner.js";
 
-import { VitestRunner , } from "./vitest-runner.js";
+import { VitestRunner , } from "../runners/vitest-runner.js";
 
 import {inspectChanges, type PrInspection,} from "./inspect.js";
 

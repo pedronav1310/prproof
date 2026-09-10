@@ -1,4 +1,4 @@
-import {} from "./test-runner.js";
+import {} from "../runners/test-runner.js";
 export function getExitCode(verdict) {
     if (verdict === "proven") {
         return 0;

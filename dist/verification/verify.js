@@ -1,7 +1,7 @@
-import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } from "./git.js";
-import { copyTestsToBase, linkNodeModules } from "./tests.js";
-import {} from "./test-runner.js";
-import { VitestRunner, } from "./vitest-runner.js";
+import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } from "../git/git.js";
+import { copyTestsToBase, linkNodeModules } from "../test-support/tests.js";
+import {} from "../runners/test-runner.js";
+import { VitestRunner, } from "../runners/vitest-runner.js";
 import { inspectChanges, } from "./inspect.js";
 import { classifyProof, } from "./proof.js";
 const reasonByVerdict = {

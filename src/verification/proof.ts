@@ -1,4 +1,4 @@
-import { type TestRunResult } from "./test-runner.js";
+import { type TestRunResult } from "../runners/test-runner.js";
 export type ProofVerdict =
   | "proven"
   | "unproven"

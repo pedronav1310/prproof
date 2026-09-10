@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getChangedTestFiles } from "../src/tests.js";
+import { getChangedTestFiles } from "../src/test-support/tests.js";
 
 describe("getChangedTestFiles", () => {
 
