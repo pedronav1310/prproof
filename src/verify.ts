@@ -6,6 +6,10 @@ import {inspectChanges, type PrInspection,} from "./inspect.js";
 
 import {classifyProof, type ProofVerdict,} from "./proof.js";
 
+export type VerificationReadiness =
+  | "ready"
+  | "not-ready";
+
 export type VerificationMode =
   | "regression"
   | "general";
@@ -57,6 +61,27 @@ export type VerificationResult =
   | TestOnlyResult
   | NoProofRequiredResult
   | GeneralVerificationResult;
+
+export function getVerificationReadiness(
+  result: VerificationResult
+): VerificationReadiness {
+  if (result.type === "general") {
+    return result.headSuiteResult.status === "passed"
+      ? "ready"
+      : "not-ready";
+  }
+
+  if (result.type === "proof") {
+    return (
+      result.verdict === "proven" &&
+      result.headSuiteResult.status === "passed"
+    )
+      ? "ready"
+      : "not-ready";
+  }
+
+  return "not-ready";
+}
 
 export function verifyRepository(targetRepo: string, baseRef: string, mode:VerificationMode): VerificationResult{
   const repoRoot = getRepoRoot(targetRepo);

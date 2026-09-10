@@ -2,6 +2,20 @@ import { createBaseWorktree, getChangedFiles, getRepoRoot, removeWorktree, } fro
 import { copyTestsToBase, linkNodeModules, runRegressionTests, runFullSuite, } from "./tests.js";
 import { inspectChanges, } from "./inspect.js";
 import { classifyProof, } from "./proof.js";
+export function getVerificationReadiness(result) {
+    if (result.type === "general") {
+        return result.headSuiteResult.status === "passed"
+            ? "ready"
+            : "not-ready";
+    }
+    if (result.type === "proof") {
+        return (result.verdict === "proven" &&
+            result.headSuiteResult.status === "passed")
+            ? "ready"
+            : "not-ready";
+    }
+    return "not-ready";
+}
 export function verifyRepository(targetRepo, baseRef, mode) {
     const repoRoot = getRepoRoot(targetRepo);
     const changedFiles = getChangedFiles(targetRepo, baseRef);
