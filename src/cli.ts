@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 
 import {getVerificationReasons, getVerificationReadiness, verifyRepository,} from "./verify.js";
-
 import {getVerdictMessage,} from "./proof.js";
-
 import { parseArgs } from "node:util";
+import { JestRunner } from "./jest-runner.js";
+import { VitestRunner } from "./vitest-runner.js";
+import { type TestRunner } from "./test-runner.js";
 
 const { values, positionals } = parseArgs({
   options: {
@@ -19,7 +20,14 @@ const { values, positionals } = parseArgs({
     json:{
       type: "boolean",
       default:false,
-    }
+    },
+    runner:{
+      type:"string",
+      default:"vitest",
+    },
+    testConfig:{
+      type:"string",
+    },
   },
   allowPositionals: true,
 });
@@ -28,11 +36,28 @@ const { values, positionals } = parseArgs({
 const mode = values.mode;
 const targetRepo = positionals[0] ?? process.cwd();
 const baseRef = values.base;
+const runner = values.runner;
 
 if (mode !== "general" && mode !== "regression") {
   console.error(`Invalid mode: ${mode}. Expected "general" or "regression".`);
 
   process.exit(2);
+}
+
+if (runner !== "vitest" && runner !== "jest") {
+  console.error(`Invalid runner: ${runner}. Expected "vitest" or "jest".`);
+
+  process.exit(2);
+}
+
+let testRunner: TestRunner;
+
+if (runner == "jest"){
+  testRunner = new JestRunner({config: values.testConfig,});
+  
+}
+else{
+  testRunner = new VitestRunner();
 }
 
 function getVerificationExitCode(result: ReturnType<typeof verifyRepository>): number {
@@ -102,7 +127,8 @@ function toJsonResult(result: ReturnType<typeof verifyRepository>, mode: "genera
 const result = verifyRepository(
   targetRepo,
   baseRef,
-  mode
+  mode,
+  testRunner
 );
 
 process.exitCode = getVerificationExitCode(result);
