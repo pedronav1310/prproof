@@ -12,11 +12,14 @@ export type PrInspection = {
 };
 
 function isTestFile(file: string): boolean {
-  return (file.endsWith(".test.ts") || file.endsWith(".spec.ts"));
+  return (file.endsWith(".test.ts") ||
+    file.endsWith(".spec.ts") ||
+    file.endsWith(".test.tsx") ||
+    file.endsWith(".spec.tsx"));
 }
 
 function isProductionFile(file: string): boolean {
-  return (file.endsWith(".ts") && !isTestFile(file));
+  return ((file.endsWith(".ts") || file.endsWith(".tsx")) && !isTestFile(file));
 }
 
 export function inspectChanges(changedFiles: string[]): PrInspection {

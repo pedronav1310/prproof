@@ -1,8 +1,11 @@
 function isTestFile(file) {
-    return (file.endsWith(".test.ts") || file.endsWith(".spec.ts"));
+    return (file.endsWith(".test.ts") ||
+        file.endsWith(".spec.ts") ||
+        file.endsWith(".test.tsx") ||
+        file.endsWith(".spec.tsx"));
 }
 function isProductionFile(file) {
-    return (file.endsWith(".ts") && !isTestFile(file));
+    return ((file.endsWith(".ts") || file.endsWith(".tsx")) && !isTestFile(file));
 }
 export function inspectChanges(changedFiles) {
     const testFiles = changedFiles.filter(isTestFile);

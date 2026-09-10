@@ -35,8 +35,12 @@ export function linkNodeModules(
 }
 
 export function getChangedTestFiles(changedFiles: string[]): string[] {
-  return changedFiles.filter((file) =>
-    file.endsWith(".test.ts") || file.endsWith(".spec.ts")
+  return changedFiles.filter(
+    (file) =>
+      file.endsWith(".test.ts") ||
+      file.endsWith(".spec.ts") ||
+      file.endsWith(".test.tsx") ||
+      file.endsWith(".spec.tsx")
   );
 }
 

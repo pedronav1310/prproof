@@ -74,4 +74,43 @@ describe("inspectChanges", () => {
       "test/payment.spec.ts",
     ]);
   });
+  test("classifies tsx production files", () => {
+  const result = inspectChanges([
+    "src/Button.tsx",
+  ]);
+
+  expect(result.kind).toBe(
+    "production-without-tests"
+  );
+});
+
+test("classifies tsx tests", () => {
+  const result = inspectChanges([
+    "src/Button.tsx",
+    "src/Button.test.tsx",
+  ]);
+
+  expect(result.kind).toBe(
+    "production-with-tests"
+  );
+
+  expect(result.testFiles).toEqual([
+    "src/Button.test.tsx",
+  ]);
+});
+
+test("recognizes spec tsx files as tests", () => {
+  const result = inspectChanges([
+    "src/Button.tsx",
+    "src/Button.spec.tsx",
+  ]);
+
+  expect(result.kind).toBe(
+    "production-with-tests"
+  );
+
+  expect(result.testFiles).toEqual([
+    "src/Button.spec.tsx",
+  ]);
+});
 });

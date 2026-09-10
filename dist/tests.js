@@ -10,7 +10,10 @@ export function linkNodeModules(repoRoot, baseWorktree) {
     symlinkSync(source, destination, "dir");
 }
 export function getChangedTestFiles(changedFiles) {
-    return changedFiles.filter((file) => file.endsWith(".test.ts") || file.endsWith(".spec.ts"));
+    return changedFiles.filter((file) => file.endsWith(".test.ts") ||
+        file.endsWith(".spec.ts") ||
+        file.endsWith(".test.tsx") ||
+        file.endsWith(".spec.tsx"));
 }
 export function copyTestsToBase(repoRoot, baseWorktree, testFiles) {
     for (const testFile of testFiles) {

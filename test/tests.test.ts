@@ -54,4 +54,18 @@ describe("getChangedTestFiles", () => {
     expect(result).toEqual(["test/math.spec.ts"]);
   });
 
+  test("recognizes tsx test files", () => {
+    const result = getChangedTestFiles([
+      "src/Button.tsx",
+      "src/Button.test.tsx",
+      "src/Button.spec.tsx",
+      "README.md",
+    ]);
+
+    expect(result).toEqual([
+      "src/Button.test.tsx",
+      "src/Button.spec.tsx",
+    ]);
+  });
+
 });
