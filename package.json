@@ -1,11 +1,11 @@
 {
   "name": "prproof",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Verify that regression tests actually prove a pull request fixes the reported bug.",
+  "main": "./dist/cli/cli.js",
   "type": "module",
   "bin": {
-    "prproof": "./dist/cli.js"
+    "prproof": "./dist/cli/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -13,8 +13,14 @@
     "test": "vitest run",
     "typecheck:test": "tsc -p tsconfig.test.json"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "testing",
+    "regression",
+    "verification",
+    "pull-request",
+    "ci"
+  ],
+  "author": "Pedro Navajas",
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^26.5.0",
