@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700" viewBox="0 0 1200 700" role="img" aria-labelledby="title desc">
+  <title id="title">PRProof agent workflow</title>
+  <desc id="desc">An issue moves through an agent-written fix, a regression test, and PRProof. Unproven evidence or a failing HEAD suite returns the agent to iteration. Proven evidence and a green suite lead to a pull request and human review.</desc>
+  <defs>
+    <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="7" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cbd5e1"/>
+    </marker>
+    <style>
+      .flow-line { fill: none; stroke: #cbd5e1; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .node { stroke: #cbd5e1; stroke-width: 2.5; filter: url(#rough); }
+      .task { fill: #183b5b; }
+      .proof { fill: #3d315b; }
+      .success { fill: #174b35; }
+      .review { fill: #654b16; }
+      .iterate { fill: #552d3d; }
+      .label { fill: #f8fafc; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 24px; text-anchor: middle; dominant-baseline: middle; }
+      .branch { fill: #e2e8f0; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 20px; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: #111827; stroke-width: 7px; stroke-linejoin: round; }
+      .caption { fill: #94a3b8; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 18px; text-anchor: middle; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="700" rx="18" fill="#111827"/>
+
+  <path class="flow-line" d="M 195 105 C 212 104, 224 105, 238 105"/>
+  <path class="flow-line" d="M 465 105 C 482 104, 494 105, 508 105"/>
+  <path class="flow-line" d="M 765 105 C 782 106, 794 105, 808 105"/>
+  <path class="flow-line" d="M 925 142 C 925 152, 925 160, 925 168"/>
+
+  <rect class="node task" x="45" y="70" width="150" height="70" rx="13"/>
+  <text class="label" x="120" y="106">Issue</text>
+
+  <rect class="node task" x="250" y="70" width="215" height="70" rx="13"/>
+  <text class="label" x="357.5" y="106">Agent writes fix</text>
+
+  <rect class="node task" x="520" y="70" width="245" height="70" rx="13"/>
+  <text class="label" x="642.5" y="96">
+    <tspan x="642.5" dy="0">Add regression</tspan>
+    <tspan x="642.5" dy="28">test</tspan>
+  </text>
+
+  <rect class="node proof" x="820" y="70" width="210" height="70" rx="13"/>
+  <text class="label" x="925" y="106">Run PRProof</text>
+
+  <path class="node proof" d="M 925 180 L 1045 250 L 925 320 L 805 250 Z"/>
+  <text class="label" x="925" y="250">PROVEN?</text>
+
+  <path class="flow-line" d="M 925 322 C 926 328, 925 333, 925 338"/>
+  <text class="branch" x="955" y="340">yes</text>
+
+  <path class="node success" d="M 925 350 L 1045 420 L 925 490 L 805 420 Z"/>
+  <text class="label" x="925" y="410">
+    <tspan x="925" dy="0">HEAD suite</tspan>
+    <tspan x="925" dy="28">green?</tspan>
+  </text>
+
+  <rect class="node iterate" x="360" y="350" width="250" height="82" rx="13"/>
+  <text class="label" x="485" y="382">
+    <tspan x="485" dy="0">Keep iterating</tspan>
+    <tspan class="caption" x="485" dy="28">fix, test, or both</tspan>
+  </text>
+
+  <path class="flow-line" d="M 803 249 C 728 249, 690 299, 620 362"/>
+  <text class="branch" x="734" y="246">no</text>
+
+  <path class="flow-line" d="M 803 420 C 728 420, 686 409, 620 397"/>
+  <text class="branch" x="735" y="416">no</text>
+
+  <path class="flow-line" d="M 360 385 C 316 382, 300 330, 302 278 L 302 145"/>
+  <text class="caption" x="302" y="460">feedback loop</text>
+
+  <path class="flow-line" d="M 925 492 C 925 503, 925 513, 925 526"/>
+  <text class="branch" x="955" y="516">yes</text>
+
+  <rect class="node success" x="805" y="538" width="240" height="76" rx="13"/>
+  <text class="label" x="925" y="566">
+    <tspan x="925" dy="0">Open or update</tspan>
+    <tspan x="925" dy="28">pull request</tspan>
+  </text>
+
+  <path class="flow-line" d="M 1047 576 C 1057 576, 1066 576, 1076 576"/>
+  <rect class="node review" x="1088" y="538" width="90" height="76" rx="13"/>
+  <text class="label" x="1133" y="566">
+    <tspan x="1133" dy="0">Human</tspan>
+    <tspan x="1133" dy="28">review</tspan>
+  </text>
+</svg>

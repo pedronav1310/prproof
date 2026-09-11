@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
+  <title id="title">PRProof GitHub Actions workflow</title>
+  <desc id="desc">An issue leads to an agent-created fix and regression test, then a pull request. GitHub Actions runs PRProof. If the evidence is not proven or the suite is not green, the agent keeps iterating. Otherwise the pull request moves to human review.</desc>
+  <defs>
+    <filter id="rough" x="-4%" y="-4%" width="108%" height="108%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="1" seed="11" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="1.1" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#cbd5e1"/>
+    </marker>
+    <style>
+      .flow-line { fill: none; stroke: #cbd5e1; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; marker-end: url(#arrow); }
+      .node { stroke: #cbd5e1; stroke-width: 2.5; filter: url(#rough); }
+      .task { fill: #183b5b; }
+      .proof { fill: #3d315b; }
+      .success { fill: #174b35; }
+      .review { fill: #654b16; }
+      .iterate { fill: #552d3d; }
+      .label { fill: #f8fafc; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 24px; text-anchor: middle; dominant-baseline: middle; }
+      .branch { fill: #e2e8f0; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 20px; font-weight: 700; text-anchor: middle; paint-order: stroke; stroke: #111827; stroke-width: 7px; stroke-linejoin: round; }
+      .group-label { fill: #c4b5fd; font-family: "Comic Sans MS", "Segoe Print", cursive; font-size: 22px; font-weight: 700; }
+      .group-box { fill: none; stroke: #8b7ab8; stroke-width: 2.5; stroke-dasharray: 10 9; filter: url(#rough); }
+    </style>
+  </defs>
+
+  <rect width="1200" height="560" rx="18" fill="#111827"/>
+
+  <rect class="group-box" x="790" y="35" width="365" height="480" rx="22"/>
+  <text class="group-label" x="815" y="72">GitHub Actions</text>
+
+  <path class="flow-line" d="M 185 135 C 200 135, 210 135, 223 135"/>
+  <path class="flow-line" d="M 495 135 C 510 135, 522 135, 536 135"/>
+  <path class="flow-line" d="M 755 135 C 770 135, 782 135, 796 135"/>
+
+  <rect class="node task" x="45" y="100" width="140" height="70" rx="13"/>
+  <text class="label" x="115" y="136">Issue</text>
+
+  <rect class="node task" x="235" y="94" width="260" height="82" rx="13"/>
+  <text class="label" x="365" y="125">
+    <tspan x="365" dy="0">Agent creates fix +</tspan>
+    <tspan x="365" dy="29">regression test</tspan>
+  </text>
+
+  <rect class="node task" x="548" y="94" width="207" height="82" rx="13"/>
+  <text class="label" x="651.5" y="125">
+    <tspan x="651.5" dy="0">Open or update</tspan>
+    <tspan x="651.5" dy="29">pull request</tspan>
+  </text>
+
+  <rect class="node proof" x="808" y="94" width="325" height="82" rx="13"/>
+  <text class="label" x="970.5" y="125">
+    <tspan x="970.5" dy="0">PRProof runs as</tspan>
+    <tspan x="970.5" dy="29">a required check</tspan>
+  </text>
+
+  <path class="flow-line" d="M 970 178 C 970 186, 970 193, 970 200"/>
+  <path class="node proof" d="M 970 212 L 1095 292 L 970 372 L 845 292 Z"/>
+  <text class="label" x="970" y="280">
+    <tspan x="970" dy="0">PROVEN + suite</tspan>
+    <tspan x="970" dy="29">green?</tspan>
+  </text>
+
+  <rect class="node iterate" x="405" y="265" width="240" height="82" rx="13"/>
+  <text class="label" x="525" y="296">
+    <tspan x="525" dy="0">Agent keeps</tspan>
+    <tspan x="525" dy="29">iterating</tspan>
+  </text>
+
+  <path class="flow-line" d="M 843 292 C 764 292, 728 300, 657 304"/>
+  <text class="branch" x="757" y="284">no</text>
+  <path class="flow-line" d="M 405 304 C 352 304, 332 248, 336 188"/>
+
+  <path class="flow-line" d="M 970 374 C 970 386, 970 398, 970 412"/>
+  <text class="branch" x="999" y="400">yes</text>
+
+  <rect class="node review" x="850" y="424" width="240" height="76" rx="13"/>
+  <text class="label" x="970" y="463">Human review</text>
+</svg>

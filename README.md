@@ -40,36 +40,9 @@ PRProof does **not** prove that the entire patch is correct, that the issue spec
 
 PRProof is designed to sit between an agent-written patch and human review.
 
-```text
-Issue
-  |
-  v
-Agent writes fix
-  |
-  v
-Agent adds regression test
-  |
-  v
-Agent runs PRProof
-  |
-  v
-PROVEN?
-  |---- no ----> keep iterating
-  |
- yes
-  |
-  v
-HEAD suite green?
-  |---- no ----> keep iterating
-  |
- yes
-  |
-  v
-Open or update PR
-  |
-  v
-Human review
-```
+![PRProof agent workflow](docs/diagrams/agent-workflow.svg)
+
+Editable source: [`agent-workflow.excalidraw`](docs/diagrams/agent-workflow.excalidraw)
 
 The goal is simple:
 
@@ -381,26 +354,9 @@ PRProof can also act as a pull-request check.
 
 A typical agent + CI workflow is:
 
-```text
-Issue
-  |
-  v
-Agent creates fix + regression test
-  |
-  v
-Agent opens or updates PR
-  |
-  v
-PRProof runs
-  |
-  +--> not proven -> agent keeps iterating
-  |
-  v
-PROVEN + suite green
-  |
-  v
-Human review
-```
+![PRProof GitHub Actions workflow](docs/diagrams/github-actions-workflow.svg)
+
+Editable source: [`github-actions-workflow.excalidraw`](docs/diagrams/github-actions-workflow.excalidraw)
 
 This keeps weak agent-generated pull requests out of the human review queue without requiring the PR itself to be delayed.
 
