@@ -10,7 +10,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/cli/cli.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck:test": "tsc -p tsconfig.test.json"
   },
   "keywords": [],
   "author": "",
