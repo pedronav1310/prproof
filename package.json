@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "dev": "tsx src/cli.ts",
+    "dev": "tsx src/cli/cli.ts",
     "test": "vitest run"
   },
   "keywords": [],
